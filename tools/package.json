@@ -1,0 +1,6 @@
+{
+  "name": "workwearcollection-flipbook-tools",
+  "private": true,
+  "description": "Render tools for the Cottonridge Workwear Collection flipbook",
+  "dependencies": { "playwright-core": "^1.48.0" }
+}

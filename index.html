@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cottonridge Workwear Collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<header class="topbar">
+  <div class="titles">
+    <h1 id="title">Cottonridge Workwear Collection</h1>
+    <p class="sub">Drag a corner, scroll, click the arrows, or use the keyboard</p>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <button class="nav prev" id="prev" aria-label="Previous page" disabled>&#8249;</button>
+  <div class="bookwrap" id="bookwrap"><div id="zoomer"></div></div>
+  <button class="nav next" id="next" aria-label="Next page">&#8250;</button>
+  <div class="zoomctl" role="group" aria-label="Zoom">
+    <button type="button" id="zout" aria-label="Zoom out">&minus;</button>
+    <span class="zv" id="zv">100%</span>
+    <button type="button" id="zin" aria-label="Zoom in">+</button>
+    <button type="button" id="zreset" aria-label="Reset zoom">&#10530;</button>
+  </div>
+  <div class="status" id="status">Loading brochure&hellip;</div>
+</main>
+
+<script src="lib/page-flip.browser.js"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+{
+ "title": "Cottonridge Workwear Collection",
+ "pageSize": [
+  595.28,
+  841.89
+ ],
+ "build": "1792164212",
+ "pages": [
+  {
+   "id": "p01",
+   "src": 1,
+   "kind": "cover"
+  },
+  {
+   "id": "p02",
+   "src": 2,
+   "kind": "page"
+  },
+  {
+   "id": "p03",
+   "src": 3,
+   "kind": "page"
+  },
+  {
+   "id": "p04",
+   "src": 4,
+   "kind": "page"
+  },
+  {
+   "id": "p05",
+   "src": 5,
+   "kind": "page"
+  },
+  {
+   "id": "p06",
+   "src": 6,
+   "kind": "page"
+  },
+  {
+   "id": "p07",
+   "src": 7,
+   "kind": "page"
+  },
+  {
+   "id": "p08",
+   "src": 8,
+   "kind": "page"
+  },
+  {
+   "id": "p09",
+   "src": 9,
+   "kind": "page"
+  },
+  {
+   "id": "p10",
+   "src": 10,
+   "kind": "page"
+  },
+  {
+   "id": "p11",
+   "src": 11,
+   "kind": "page"
+  },
+  {
+   "id": "p12",
+   "src": 12,
+   "kind": "page"
+  },
+  {
+   "id": "p13",
+   "src": 13,
+   "kind": "page"
+  },
+  {
+   "id": "p14",
+   "src": 14,
+   "kind": "page"
+  },
+  {
+   "id": "p15",
+   "src": 15,
+   "kind": "page"
+  },
+  {
+   "id": "p16",
+   "src": 16,
+   "kind": "back"
+  }
+ ]
+}
