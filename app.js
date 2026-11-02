@@ -38,12 +38,17 @@
   }
 
   // ---- book -------------------------------------------------------------------
+  /** A page's image: embedded in the single-file copy, a file on the site. */
+  function pageSrc(p) {
+    return window.EMBEDDED ? window.EMBEDDED.images[p.id] : `pages/${p.id}.jpg?v=${catalog.build}`;
+  }
+
   function pageEl(p) {
     const el = document.createElement('div');
     el.className = 'page';
     if (p.edge) { el.classList.add('edge'); return el; }
     const img = document.createElement('img');
-    img.src = window.EMBEDDED ? window.EMBEDDED.images[p.id] : `pages/${p.id}.jpg?v=${catalog.build}`;
+    img.src = pageSrc(p);
     img.alt = '';
     img.decoding = 'async';
     img.draggable = false;
@@ -106,6 +111,7 @@
     else if (landscape && i >= last && layout[layout.length - 1].edge) shift = 25;
     const book = $('book');
     if (book) book.style.transform = `translateX(${shift}%)`;
+    if (window.__ui) window.__ui(i, landscape);
   }
 
   // ---- turning pages ----------------------------------------------------------
@@ -220,6 +226,114 @@
   }).observe(wrap);
 
   // ---- init -------------------------------------------------------------------
+
+  // ---- wrapper: counter, thumbnails, full screen, PDF, welcome screen ----------------
+  const N = catalog => catalog.pages.length;
+  window.__ui = function (i, landscape) {
+    if (!catalog) return;
+    const shown = [layout[i], landscape ? layout[i + 1] : null].filter((p) => p && !p.edge)
+      .map((p) => catalog.pages.findIndex((q) => q.id === p.id) + 1);
+    const total = N(catalog);
+    $('count').textContent = shown.length === 2 ? `Pages ${shown[0]} and ${shown[1]} of ${total}` : `Page ${shown[0]} of ${total}`;
+    document.querySelectorAll('#thumbs button').forEach((b) => b.classList.toggle('on', shown.includes(+b.dataset.n)));
+  };
+
+  function buildThumbs() {
+    const box = $('thumbs');
+    catalog.pages.forEach((p, k) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.n = k + 1; b.setAttribute('aria-label', 'Go to page ' + (k + 1));
+      const im = document.createElement('img'); im.src = pageSrc(p); im.alt = ''; im.loading = 'lazy'; im.decoding = 'async';
+      b.appendChild(im);
+      b.onclick = () => {
+        if (!flip) return;
+        const landscape = flip.getOrientation() === 'landscape';
+        let idx = landscape ? (k % 2 === 0 ? k + 1 : k) : k;   // spreads start on an even layout index
+        if (landscape) idx = (k + 1) % 2 === 0 ? k + 1 : k;
+        flip.turnToPage(idx); applyState(flip.getCurrentPageIndex());
+      };
+      box.appendChild(b);
+    });
+  }
+  $('thumbtoggle').onclick = () => {
+    const open = $('thumbs').classList.toggle('open');
+    $('thumbtoggle').textContent = open ? 'Hide pages' : 'Show all pages';
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+  };
+
+  // full screen (hidden where the browser does not support it, e.g. iPhone)
+  const root = document.documentElement;
+  const canFS = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+  if (!canFS) $('fs').style.display = 'none';
+  $('fs').onclick = () => {
+    const on = document.fullscreenElement || document.webkitFullscreenElement;
+    try { on ? (document.exitFullscreen || document.webkitExitFullscreen).call(document) : (root.requestFullscreen || root.webkitRequestFullscreen).call(root); } catch (e) {}
+  };
+
+  // welcome screen
+  const intro = $('intro');
+  function enter() { intro.classList.add('gone'); }
+  $('enter').onclick = enter;
+  intro.addEventListener('click', (e) => { if (e.target === intro) enter(); });
+  document.addEventListener('keydown', (e) => { if (!intro.classList.contains('gone') && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight')) { e.preventDefault(); enter(); } }, true);
+
+  // PDF built in the browser from the page images already in this file, so it works offline
+  function jpegSize(bytes) {
+    let p = 2;
+    while (p < bytes.length) {
+      if (bytes[p] !== 0xFF) { p++; continue; }
+      const m = bytes[p + 1];
+      if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC)
+        return { h: (bytes[p + 5] << 8) | bytes[p + 6], w: (bytes[p + 7] << 8) | bytes[p + 8], comps: bytes[p + 9] };
+      p += 2 + ((bytes[p + 2] << 8) | bytes[p + 3]);
+    }
+    return { w: 1240, h: 1754, comps: 3 };
+  }
+  function makePDF() {
+    const enc = new TextEncoder(), parts = [], offs = []; let len = 0;
+    const push = (x) => { const u = typeof x === 'string' ? enc.encode(x) : x; parts.push(u); len += u.length; };
+    const obj = (n, head, stream) => {
+      offs[n] = len; push(`${n} 0 obj\n${head}`);
+      if (stream) { push(`\nstream\n`); push(stream); push(`\nendstream`); }
+      push(`\nendobj\n`);
+    };
+    const pgs = catalog.pages, n = pgs.length;
+    push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+    obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+    obj(2, `<< /Type /Pages /Count ${n} /Kids [${pgs.map((_, k) => `${3 + k * 3} 0 R`).join(' ')}] >>`);
+    const W = 595.28, H = 841.89;
+    pgs.forEach((p, k) => {
+      const b64 = window.EMBEDDED.images[p.id].split(',')[1], bin = atob(b64), bytes = new Uint8Array(bin.length);
+      for (let q = 0; q < bin.length; q++) bytes[q] = bin.charCodeAt(q);
+      const sz = jpegSize(bytes), pn = 3 + k * 3, cn = pn + 1, im = pn + 2;
+      obj(pn, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 ${im} 0 R >> >> /Contents ${cn} 0 R >>`);
+      const content = `q ${W} 0 0 ${H} 0 0 cm /Im0 Do Q`;
+      obj(cn, `<< /Length ${content.length} >>`, enc.encode(content));
+      obj(im, `<< /Type /XObject /Subtype /Image /Width ${sz.w} /Height ${sz.h} /ColorSpace ${sz.comps === 1 ? '/DeviceGray' : '/DeviceRGB'} /BitsPerComponent 8 /Filter /DCTDecode /Length ${bytes.length} >>`, bytes);
+    });
+    const total = 3 + n * 3, xref = len;
+    push(`xref\n0 ${total}\n0000000000 65535 f \n`);
+    for (let k = 1; k < total; k++) push(String(offs[k]).padStart(10, '0') + ' 00000 n \n');
+    push(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
+    return new Blob(parts, { type: 'application/pdf' });
+  }
+  $('pdf').onclick = () => {
+    if (!window.EMBEDDED) {                       // on the site: the finished PDF
+      const a = document.createElement('a'); a.href = 'downloads/Cottonridge-Workwear-Collection.pdf'; a.download = 'Cottonridge-Workwear-Collection-2027.pdf';
+      document.body.appendChild(a); a.click(); a.remove();
+      return;
+    }
+    const b = $('pdf'), label = b.textContent; b.disabled = true; b.textContent = 'Preparing PDF…';
+    setTimeout(() => {
+      try {
+        const url = URL.createObjectURL(makePDF());
+        const a = document.createElement('a'); a.href = url; a.download = 'Cottonridge-Workwear-Collection-2027.pdf';
+        document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+      } catch (e) { alert('Sorry, the PDF could not be prepared on this device.'); }
+      b.disabled = false; b.textContent = label;
+    }, 30);
+  };
+
   async function init() {
     try {
       // the downloadable HTML copy carries its catalog and page images inside the file
@@ -230,9 +344,8 @@
       return;
     }
     [pageW, pageH] = catalog.pageSize;
-    $('title').textContent = catalog.title;
-    document.title = catalog.title;
     applyZoom();
+    buildThumbs();
     buildBook();
   }
 

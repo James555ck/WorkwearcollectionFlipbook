@@ -7,8 +7,9 @@ stamp (added to every image URL so a new import never shows cached pages) go int
 
 It also writes the two files the site offers for download, so they always match the pages:
   downloads/Cottonridge-Workwear-Collection.pdf               a copy of the PDF
-  downloads/Cottonridge-Workwear-Collection-flipbook.html     the whole flipbook in ONE file (viewer, library
-                                                               and all pages embedded; works offline, view-only)
+  downloads/Cottonridge-Workwear-Collection-flipbook.html     the whole flipbook in ONE file (viewer, library,
+                                                               logo and all pages embedded; works offline, view-only;
+                                                               its Download PDF button builds a PDF from the embedded pages)
 Needs pymupdf (pip install pymupdf).
 """
 import base64
@@ -47,7 +48,10 @@ def build_standalone(catalog: dict) -> Path:
     swap(r'<link rel="stylesheet" href="style\.css[^"]*">', "<style>" + css + "</style>")
     swap(r'<script src="lib/page-flip\.browser\.js"></script>', "<script>" + lib + "</script>")
     swap(r'<script src="app\.js[^"]*"></script>', "<script>" + embedded + "</script><script>" + app + "</script>")
-    swap(r"<body>", '<body class="standalone">')           # hides the download buttons: the copy is view-only
+    swap(r"<body>", '<body class="standalone">')           # hides the site-only buttons: the copy is view-only
+    logo = "data:image/png;base64," + base64.b64encode((ROOT / "assets" / "logo.png").read_bytes()).decode()
+    assert 'src="assets/logo.png"' in html
+    html = html.replace('src="assets/logo.png"', 'src="' + logo + '"')
     out = ROOT / "downloads" / "Cottonridge-Workwear-Collection-flipbook.html"
     out.write_text(html, encoding="utf-8")
     return out
