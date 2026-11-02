@@ -1,6 +1,6 @@
 /* Cottonridge Workwear Collection flipbook.
  *
- * Pages are plain images listed in catalog.json (see tools/render_pages.js). In a two-page view the
+ * Pages are plain images listed in catalog.json (see tools/build_from_pdf.py). In a two-page view the
  * cover and back cover each sit alone beside a see-through blank page, so they turn like any other
  * page. Turning (wheel, keys, arrows) follows the Cottonridge brochure: wheel movement is summed to a
  * threshold, and turns asked for mid-flip (up to 2) are queued and played straight after.
@@ -43,7 +43,7 @@
     el.className = 'page';
     if (p.edge) { el.classList.add('edge'); return el; }
     const img = document.createElement('img');
-    img.src = `pages/${p.id}.jpg?v=${catalog.build}`;
+    img.src = window.EMBEDDED ? window.EMBEDDED.images[p.id] : `pages/${p.id}.jpg?v=${catalog.build}`;
     img.alt = '';
     img.decoding = 'async';
     img.draggable = false;
@@ -222,7 +222,9 @@
   // ---- init -------------------------------------------------------------------
   async function init() {
     try {
-      catalog = await (await fetch('catalog.json?t=' + Date.now(), { cache: 'no-store' })).json();
+      // the downloadable HTML copy carries its catalog and page images inside the file
+      catalog = window.EMBEDDED ? window.EMBEDDED.catalog
+        : await (await fetch('catalog.json?t=' + Date.now(), { cache: 'no-store' })).json();
     } catch (e) {
       status.textContent = 'Could not load the brochure.';
       return;
