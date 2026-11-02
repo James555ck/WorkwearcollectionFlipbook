@@ -7,18 +7,22 @@ Ctrl + scroll, or `+` `-` `0`. Everything runs in the browser; nothing is sent t
 ## Files
 - `index.html`, `style.css`, `app.js` - the viewer
 - `lib/page-flip.browser.js` - the page-turning library ([StPageFlip](https://github.com/Nodlik/StPageFlip), MIT)
-- `pages/p01.jpg` ... - the 16 pages (150 dpi), rendered from the design file
+- `pages/p01.jpg` ... - the 16 pages (150 dpi), rendered from the final PDF
 - `catalog.json` - the page list
-- `tools/render_pages.js` - regenerates `pages/` and `catalog.json` from the design file
+- `tools/build_from_pdf.py`, `tools/render_pages.js` - regenerate `pages/` and `catalog.json` from a PDF or from the design file
 
 ## Updating the pages
-The pages come from `Cottonridge Workwear Collection.dc.html` (the design file, with its `assets/` folder). To re-render after
-the design changes:
+From a finished PDF (this is how the current pages were made):
+
+    pip install pymupdf
+    python tools/build_from_pdf.py "path/to/Cottonridge Workwear Collection final.pdf"
+
+Or straight from the design file (`Cottonridge Workwear Collection.dc.html` plus its `assets/` folder):
 
     cd tools && npm install && cd ..
     node tools/render_pages.js "<folder with the .dc.html and assets>" .
 
-Needs Google Chrome (set `CHROME` if it is not in the default place).
+The design-file route needs Google Chrome (set `CHROME` if it is not in the default place).
 
 ## Run it locally
 
