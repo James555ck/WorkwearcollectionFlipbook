@@ -2,7 +2,7 @@
 
 Usage:  python tools/build_from_pdf.py "<path to the brochure PDF>"
 
-Writes pages/pNN.jpg (150 dpi, exactly as printed) and catalog.json. The page list, sizes and a build
+Writes pages/pNN.jpg (200 dpi, exactly as printed) and catalog.json. The page list, sizes and a build
 stamp (added to every image URL so a new import never shows cached pages) go into catalog.json.
 
 It also writes the two files the site offers for download, so they always match the pages:
@@ -23,8 +23,8 @@ from pathlib import Path
 import pymupdf
 
 ROOT = Path(__file__).resolve().parent.parent
-DPI = 150
-JPG_QUALITY = 86
+DPI = 200            # the PDF's photos hold ~150-240 dpi of real detail; text is vector. Higher costs memory for no gain
+JPG_QUALITY = 88
 
 
 def build_standalone(catalog: dict) -> Path:

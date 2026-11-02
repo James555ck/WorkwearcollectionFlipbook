@@ -17,7 +17,7 @@ Both are rebuilt from the PDF by `tools/build_from_pdf.py`, so they always match
 - `index.html`, `style.css`, `app.js` - the viewer
 - `assets/logo.png` - the header / welcome-screen logo
 - `lib/page-flip.browser.js` - the page-turning library ([StPageFlip](https://github.com/Nodlik/StPageFlip), MIT)
-- `pages/p01.jpg` ... - the 16 pages (150 dpi), rendered from the final PDF
+- `pages/p01.jpg` ... - the 16 pages (200 dpi), rendered from the final PDF
 - `downloads/` - the PDF and the single-file HTML flipbook offered for download
 - `catalog.json` - the page list
 - `tools/build_from_pdf.py`, `tools/render_pages.js` - regenerate `pages/` and `catalog.json` from a PDF or from the design file
