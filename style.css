@@ -69,16 +69,7 @@ a{color:inherit}
 .contact a{text-decoration:none;color:var(--fg)}.contact a:hover{color:var(--accent)}
 @media (max-width:720px){.bar{flex-direction:column;align-items:stretch;gap:6px;text-align:center}.bar .left{justify-content:center}.contact{justify-content:center;gap:14px}.count{min-width:0}}
 
-/* welcome screen */
-.intro{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:32px;
-  background:radial-gradient(120% 90% at 50% 40%,#1f1f1f 0%,#0a0a0a 70%);transition:opacity .5s ease,visibility .5s}
-.intro.gone{opacity:0;visibility:hidden;pointer-events:none}
-.intro img{width:min(360px,70vw);height:auto;display:block}
-.intro h1{margin:0;font-size:clamp(20px,3.2vw,30px);font-weight:600;letter-spacing:.01em}
-.intro p{margin:0;color:var(--muted);max-width:44ch}
-.intro .btn{font-size:15px;padding:12px 28px}
-.intro small{color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-size:11px}
-@media print{.topbar,.bar,.thumbs,.nav,.zoomctl,.intro{display:none}}
+@media print{.topbar,.bar,.thumbs,.nav,.zoomctl{display:none}}
 .standalone .site-only{display:none}
 /* the site's header has one more button than the single-file copy: on mid-width screens drop the tag next to the logo (the logo says it) */
 .brand .tag{overflow:hidden;text-overflow:ellipsis}.tools{flex:0 0 auto}

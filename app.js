@@ -227,7 +227,7 @@
 
   // ---- init -------------------------------------------------------------------
 
-  // ---- wrapper: counter, thumbnails, full screen, PDF, welcome screen ----------------
+  // ---- wrapper: counter, thumbnails, full screen, PDF ----------------
   const N = catalog => catalog.pages.length;
   window.__ui = function (i, landscape) {
     if (!catalog) return;
@@ -269,13 +269,6 @@
     const on = document.fullscreenElement || document.webkitFullscreenElement;
     try { on ? (document.exitFullscreen || document.webkitExitFullscreen).call(document) : (root.requestFullscreen || root.webkitRequestFullscreen).call(root); } catch (e) {}
   };
-
-  // welcome screen
-  const intro = $('intro');
-  function enter() { intro.classList.add('gone'); }
-  $('enter').onclick = enter;
-  intro.addEventListener('click', (e) => { if (e.target === intro) enter(); });
-  document.addEventListener('keydown', (e) => { if (!intro.classList.contains('gone') && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight')) { e.preventDefault(); enter(); } }, true);
 
   // PDF built in the browser from the page images already in this file, so it works offline
   function jpegSize(bytes) {
