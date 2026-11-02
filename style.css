@@ -80,3 +80,6 @@ a{color:inherit}
 .intro small{color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-size:11px}
 @media print{.topbar,.bar,.thumbs,.nav,.zoomctl,.intro{display:none}}
 .standalone .site-only{display:none}
+/* the site's header has one more button than the single-file copy: on mid-width screens drop the tag next to the logo (the logo says it) */
+.brand .tag{overflow:hidden;text-overflow:ellipsis}.tools{flex:0 0 auto}
+@media (max-width:1240px){body:not(.standalone) .brand .tag{display:none}}
