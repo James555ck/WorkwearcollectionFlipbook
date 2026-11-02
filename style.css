@@ -12,7 +12,6 @@ a{color:inherit}
   padding:calc(10px + env(safe-area-inset-top,0px)) 20px 10px;background:var(--bg);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:16px;min-width:0}
 .brand img{height:44px;width:auto;display:block}
-.brand .tag{color:var(--muted);font-size:12px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .tools{display:flex;gap:8px;flex-wrap:nowrap}
 .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:transparent;color:var(--fg);
   font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;cursor:pointer;white-space:nowrap;text-decoration:none;transition:background .15s,border-color .15s}
@@ -20,7 +19,7 @@ a{color:inherit}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#111}
 .btn.primary:hover{background:#ff8238;border-color:#ff8238}
 .btn[disabled]{opacity:.6;cursor:wait}
-@media (max-width:720px){.brand .tag{display:none}.brand img{height:34px}.btn.opt{display:none}.btn{padding:7px 13px}.topbar{padding-left:14px;padding-right:14px}}
+@media (max-width:720px){.brand img{height:34px}.btn.opt{display:none}.btn{padding:7px 13px}.topbar{padding-left:14px;padding-right:14px}}
 
 /* stage */
 .stage{flex:1 1 auto;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px}
@@ -71,6 +70,4 @@ a{color:inherit}
 
 @media print{.topbar,.bar,.thumbs,.nav,.zoomctl{display:none}}
 .standalone .site-only{display:none}
-/* the site's header has one more button than the single-file copy: on mid-width screens drop the tag next to the logo (the logo says it) */
-.brand .tag{overflow:hidden;text-overflow:ellipsis}.tools{flex:0 0 auto}
-@media (max-width:1240px){body:not(.standalone) .brand .tag{display:none}}
+.tools{flex:0 0 auto}
